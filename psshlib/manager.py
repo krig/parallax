@@ -6,6 +6,7 @@ import select
 import signal
 import sys
 import threading
+import copy
 
 try:
     import queue
@@ -43,6 +44,7 @@ class Manager(object):
 
         self.taskcount = 0
         self.tasks = []
+        self.save_tasks = []
         self.running = []
         self.done = []
 
@@ -50,6 +52,7 @@ class Manager(object):
 
     def run(self):
         """Processes tasks previously added with add_task."""
+        self.save_tasks = copy.copy(self.tasks)
         try:
             if self.outdir or self.errdir:
                 writer = Writer(self.outdir, self.errdir)
@@ -88,7 +91,7 @@ class Manager(object):
             writer.signal_quit()
             writer.join()
 
-        statuses = [task.exitstatus for task in self.done]
+        statuses = [task.exitstatus for task in self.save_tasks if task in self.done]
         return statuses
 
     def clear_sigchld_handler(self):
