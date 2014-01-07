@@ -9,8 +9,8 @@ import textwrap
 
 from psshlib import version
 
-_DEFAULT_PARALLELISM = 32
-_DEFAULT_TIMEOUT     = 0 # "infinity" by default
+DEFAULT_PARALLELISM = 32
+DEFAULT_TIMEOUT     = 0 # "infinity" by default
 
 
 def common_parser():
@@ -60,7 +60,7 @@ def common_parser():
 
 
 def common_defaults(**kwargs):
-    defaults = dict(par=_DEFAULT_PARALLELISM, timeout=_DEFAULT_TIMEOUT)
+    defaults = dict(par=DEFAULT_PARALLELISM, timeout=DEFAULT_TIMEOUT)
     defaults.update(**kwargs)
     envvars = [('user', 'PSSH_USER'),
             ('par', 'PSSH_PAR'),

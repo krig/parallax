@@ -1,4 +1,5 @@
 # Copyright (c) 2009-2012, Andrew McNabb
+# Copyright (c) 2013, Kristoffer Gronlund
 
 from errno import EINTR
 from subprocess import Popen, PIPE
@@ -9,7 +10,6 @@ import time
 import traceback
 
 from psshlib import askpass_client
-from psshlib import color
 
 BUFFER_SIZE = 1 << 16
 
@@ -25,7 +25,38 @@ class Task(object):
     Upon completion, the `exitstatus` attribute is set to the exit status
     of the process.
     """
-    def __init__(self, host, port, user, cmd, opts, stdin=None):
+    def __init__(self,
+                 host,
+                 port,
+                 user,
+                 cmd,
+                 verbose=False,
+                 quiet=False,
+                 stdin=None,
+                 print_out=False,
+                 inline=False,
+                 inline_stdout=False,
+                 default_user=None):
+
+        # Backwards compatibility:
+        if not isinstance(verbose, bool):
+            opts = verbose
+            verbose = opts.verbose
+            quiet = opts.quiet
+            try:
+                print_out = bool(opts.print_out)
+            except AttributeError:
+                print_out = False
+            try:
+                inline = bool(opts.inline)
+            except AttributeError:
+                inline = False
+            try:
+                inline_stdout = bool(opts.inline_stdout)
+            except AttributeError:
+                inline_stdout = False
+            default_user = opts.user
+
         self.exitstatus = None
 
         self.host = host
@@ -33,7 +64,7 @@ class Task(object):
         self.port = port
         self.cmd = cmd
 
-        if user != opts.user:
+        if user and user != default_user:
             self.pretty_host = '@'.join((user, self.pretty_host))
         if port:
             self.pretty_host = ':'.join((self.pretty_host, port))
@@ -55,20 +86,11 @@ class Task(object):
         self.errfile = None
 
         # Set options.
-        self.verbose = opts.verbose
-        self.quiet = opts.quiet
-        try:
-            self.print_out = bool(opts.print_out)
-        except AttributeError:
-            self.print_out = False
-        try:
-            self.inline = bool(opts.inline)
-        except AttributeError:
-            self.inline = False
-        try:
-            self.inline_stdout = bool(opts.inline_stdout)
-        except AttributeError:
-            self.inline_stdout = False
+        self.verbose = verbose
+        self.quiet = quiet
+        self.print_out = print_out
+        self.inline = inline
+        self.inline_stdout = inline_stdout
 
     def start(self, nodenum, iomap, writer, askpass_socket=None):
         """Starts the process and registers files with the IOMap."""
@@ -252,43 +274,5 @@ class Task(object):
             exc = str(e)
         self.failures.append(exc)
 
-    def report(self, n):
-        """Pretty prints a status report after the Task completes."""
-        error = ', '.join(self.failures)
-        tstamp = time.asctime().split()[3] # Current time
-        if color.has_colors(sys.stdout):
-            progress = color.c("[%s]" % color.B(n))
-            success = color.g("[%s]" % color.B("SUCCESS"))
-            failure = color.r("[%s]" % color.B("FAILURE"))
-            stderr = color.r("Stderr: ")
-            error = color.r(color.B(error))
-        else:
-            progress = "[%s]" % n
-            success = "[SUCCESS]"
-            failure = "[FAILURE]"
-            stderr = "Stderr: "
-        host = self.pretty_host
-        if not self.quiet:
-            if self.failures:
-                print(' '.join((progress, tstamp, failure, host, error)))
-            else:
-                print(' '.join((progress, tstamp, success, host)))
-        # NOTE: The extra flushes are to ensure that the data is output in
-        # the correct order with the C implementation of io.
-        if self.outputbuffer:
-            sys.stdout.flush()
-            try:
-                sys.stdout.buffer.write(self.outputbuffer)
-                sys.stdout.flush()
-            except AttributeError:
-                sys.stdout.write(self.outputbuffer)
-        if self.errorbuffer:
-            sys.stdout.write(stderr)
-            # Flush the TextIOWrapper before writing to the binary buffer.
-            sys.stdout.flush()
-            try:
-                sys.stdout.buffer.write(self.errorbuffer)
-            except AttributeError:
-                sys.stdout.write(self.errorbuffer)
-
 # vim:ts=4:sw=4:et:
+
