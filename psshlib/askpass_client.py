@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- Mode: python -*-
 
 # Copyright (c) 2009-2012, Andrew McNabb
