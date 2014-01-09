@@ -45,6 +45,8 @@ def common_parser():
             metavar='OPTION', help='SSH option (OPTIONAL)')
     parser.add_option('-v', '--verbose', dest='verbose', action='store_true',
             help='turn on warning and diagnostic messages (OPTIONAL)')
+    parser.add_option('-q', '--quiet', dest='quiet', action='store_true',
+            help='turn off informational and status messages (OPTIONAL)')
     parser.add_option('-A', '--askpass', dest='askpass', action='store_true',
             help='Ask for a password (OPTIONAL)')
     parser.add_option('-x', '--extra-args', action='callback', type='string',
@@ -66,6 +68,7 @@ def common_defaults(**kwargs):
             ('errdir', 'PSSH_ERRDIR'),
             ('timeout', 'PSSH_TIMEOUT'),
             ('verbose', 'PSSH_VERBOSE'),
+            ('quiet', 'PSSH_QUIET'),
             ('print_out', 'PSSH_PRINT'),
             ('askpass', 'PSSH_ASKPASS'),
             ('inline', 'PSSH_INLINE'),

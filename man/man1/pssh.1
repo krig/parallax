@@ -7,7 +7,7 @@ pssh \(em parallel ssh program
 
 .SH SYNOPSIS
 .B pssh
-.RB [ \-vAiIP ]
+.RB [ \-vqAiIP ]
 .RB [ \-h
 .IR hosts_file ]
 .RB [ \-H
@@ -31,7 +31,7 @@ pssh \(em parallel ssh program
 .I command ...
 
 .B pssh \-I
-.RB [ \-vAiIP ]
+.RB [ \-vqAiIP ]
 .RB [ \-h
 .IR hosts_file ]
 .RB [ \-H
@@ -235,6 +235,15 @@ Include error messages from ssh with the
 and
 .B \e
 options.
+
+.TP
+.B \-q
+.PD 0
+.TP
+.B \-\-quiet
+Don't print status messages. With
+.B \-i
+prepend host names to the output.
 
 .TP
 .B \-I

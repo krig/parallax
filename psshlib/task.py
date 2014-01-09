@@ -56,6 +56,7 @@ class Task(object):
 
         # Set options.
         self.verbose = opts.verbose
+        self.quiet = opts.quiet
         try:
             self.print_out = bool(opts.print_out)
         except AttributeError:
@@ -188,7 +189,10 @@ class Task(object):
             buf = os.read(fd, BUFFER_SIZE)
             if buf:
                 if self.inline or self.inline_stdout:
-                    self.outputbuffer += buf
+                    if self.quiet:
+                        self.outputbuffer += "%s: %s" % (self.host, buf)
+                    else:
+                        self.outputbuffer += buf
                 if self.outfile:
                     self.writer.write(self.outfile, buf)
                 if self.print_out:
@@ -264,10 +268,11 @@ class Task(object):
             failure = "[FAILURE]"
             stderr = "Stderr: "
         host = self.pretty_host
-        if self.failures:
-            print(' '.join((progress, tstamp, failure, host, error)))
-        else:
-            print(' '.join((progress, tstamp, success, host)))
+        if not self.quiet:
+            if self.failures:
+                print(' '.join((progress, tstamp, failure, host, error)))
+            else:
+                print(' '.join((progress, tstamp, success, host)))
         # NOTE: The extra flushes are to ensure that the data is output in
         # the correct order with the C implementation of io.
         if self.outputbuffer:
@@ -286,3 +291,4 @@ class Task(object):
             except AttributeError:
                 sys.stdout.write(self.errorbuffer)
 
+# vim:ts=4:sw=4:et:
