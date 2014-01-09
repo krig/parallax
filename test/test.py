@@ -25,7 +25,7 @@ class PsshTest(unittest.TestCase):
         self.outDir = tempfile.mkdtemp()
         self.errDir = tempfile.mkdtemp()
 
-    def teardown(self):
+    def tearDown(self):
         shutil.rmtree(self.errDir)
         shutil.rmtree(self.outDir)
 
@@ -69,7 +69,7 @@ class PscpTest(unittest.TestCase):
         self.outDir = tempfile.mkdtemp()
         self.errDir = tempfile.mkdtemp()
 
-    def teardown(self):
+    def tearDown(self):
         shutil.rmtree(self.errDir)
         shutil.rmtree(self.outDir)
         try:
@@ -134,7 +134,7 @@ class PslurpTest(unittest.TestCase):
         self.outDir = tempfile.mkdtemp()
         self.errDir = tempfile.mkdtemp()
 
-    def teardown(self):
+    def tearDown(self):
         shutil.rmtree(self.errDir)
         shutil.rmtree(self.outDir)
 
@@ -200,7 +200,7 @@ class PrsyncTest(unittest.TestCase):
         self.outDir = tempfile.mkdtemp()
         self.errDir = tempfile.mkdtemp()
 
-    def teardown(self):
+    def tearDown(self):
         shutil.rmtree(self.errDir)
         shutil.rmtree(self.outDir)
 
@@ -261,7 +261,7 @@ class PnukeTest(unittest.TestCase):
         self.outDir = tempfile.mkdtemp()
         self.errDir = tempfile.mkdtemp()
 
-    def teardown(self):
+    def tearDown(self):
         shutil.rmtree(self.errDir)
         shutil.rmtree(self.outDir)
 
