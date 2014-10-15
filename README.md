@@ -73,4 +73,4 @@ to a node and obtain a result.
 
   [pssh]: https://code.google.com/p/parallel-ssh/ "parallel-ssh"
   [ez]: http://peak.telecommunity.com/dist/ez_setup.py "ez_setup.py"
-  [obs]: https://build.opensuse.org/
+  [obs]: https://build.opensuse.org/package/show/home:KGronlund/python-parallax "OBS:python-parallax"
