@@ -32,15 +32,15 @@ class PasswordServer(object):
         at once.
         """
         message = ('Warning: do not enter your password if anyone else has'
-                ' superuser privileges or access to your account.')
+                   ' superuser privileges or access to your account.')
         print(textwrap.fill(message))
 
         self.password = getpass.getpass()
 
         # Note that according to the docs for mkdtemp, "The directory is
         # readable, writable, and searchable only by the creating user."
-        self.tempdir = tempfile.mkdtemp(prefix='pssh.')
-        self.address = os.path.join(self.tempdir, 'pssh_askpass_socket')
+        self.tempdir = tempfile.mkdtemp(prefix='parallax.')
+        self.address = os.path.join(self.tempdir, 'parallax_askpass_socket')
         self.sock = socket.socket(socket.AF_UNIX)
         psshutil.set_cloexec(self.sock)
         self.sock.bind(self.address)
@@ -97,4 +97,3 @@ class PasswordServer(object):
             os.remove(self.address)
         if self.tempdir:
             os.rmdir(self.tempdir)
-

@@ -25,6 +25,7 @@ import textwrap
 bin_dir = os.path.dirname(os.path.abspath(sys.argv[0]))
 askpass_bin_path = os.path.join(bin_dir, 'parallax-askpass')
 ASKPASS_PATHS = (askpass_bin_path,
+        '/usr/bin/parallax-askpass',
         '/usr/libexec/parallax/parallax-askpass',
         '/usr/local/libexec/parallax/parallax-askpass',
         '/usr/lib/parallax/parallax-askpass',

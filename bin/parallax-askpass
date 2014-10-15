@@ -4,8 +4,8 @@ import os
 import sys
 
 parent, bindir = os.path.split(os.path.dirname(os.path.abspath(sys.argv[0])))
-if os.path.exists(os.path.join(parent, 'psshlib')):
+if os.path.exists(os.path.join(parent, 'parallax')):
     sys.path.insert(0, parent)
 
-from psshlib.askpass_client import askpass_main
+from parallax.askpass_client import askpass_main
 askpass_main()
