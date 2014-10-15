@@ -80,7 +80,7 @@ def _expand_host_port_user(lst):
     Output: list of (host, port, user)-tuples.
     """
     def expand(v):
-        if isinstance(v, basestring):
+        if isinstance(v, str):
             return (v, None, None)
         elif len(v) == 1:
             return (v[0], None, None)

@@ -114,7 +114,7 @@ def get_pacemaker_nodes():
         outp = p.communicate()[0]
         p.wait()
         rc = p.returncode
-    except IOError, msg:
+    except IOError as msg:
         sys.stderr.write('%s failed: %s\n' % (cmd, msg))
         return hosts
     if rc != 0:
