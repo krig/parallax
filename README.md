@@ -20,6 +20,10 @@ Once those requirements are fulfilled, installation is as simple as:
 Packaged versions of Parallax SSH for various distributions can be
 downloaded from the openSUSE [OBS][obs].
 
+To install via PyPI, use `pip`:
+
+    # pip install parallax
+
 Share and enjoy!
 
 ## Usage
