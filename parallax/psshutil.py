@@ -3,6 +3,7 @@
 
 import fcntl
 import sys
+import subprocess
 
 HOST_FORMAT = 'Host format is [user@]host[:port] [user]'
 
@@ -98,6 +99,35 @@ def parse_host(host, default_user=None, default_port=None):
     return (host, port, user)
 
 
+def get_pacemaker_nodes():
+    """Get the list of nodes from crm_node -l.
+
+    Returns a list of (host, port, user) triples.
+    """
+    hosts = []
+    if subprocess.call("which crm_node >/dev/null 2>&1", shell=True) != 0:
+        sys.stderr.write('crm_node not available\n')
+        return hosts
+    cmd = "crm_node -l"
+    p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
+    try:
+        outp = p.communicate()[0]
+        p.wait()
+        rc = p.returncode
+    except IOError, msg:
+        sys.stderr.write('%s failed: %s\n' % (cmd, msg))
+        return hosts
+    if rc != 0:
+        sys.stderr.write('%s failed: exit code %d\n' % (cmd, rc))
+        return hosts
+    for s in outp.split('\n'):
+        a = s.split()
+        if len(a) < 2:
+            continue
+        hosts.append((a[1], None, None))
+    return hosts
+
+
 def set_cloexec(filelike):
     """Sets the underlying filedescriptor to automatically close on exec.
 
@@ -105,3 +135,5 @@ def set_cloexec(filelike):
     not require the close_fds option.
     """
     fcntl.fcntl(filelike.fileno(), fcntl.FD_CLOEXEC, 1)
+
+# vim:ts=4:sw=4:et:
