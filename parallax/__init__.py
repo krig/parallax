@@ -35,7 +35,7 @@ from parallax.manager import Manager, FatalError
 from parallax.task import Task
 
 
-class Error(object):
+class Error(BaseException):
     """
     Returned instead of a result for a host
     in case of an error during the processing for
