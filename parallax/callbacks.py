@@ -4,7 +4,7 @@
 import sys
 import time
 
-from psshlib import color
+from parallax import color
 
 
 class DefaultCallbacks(object):

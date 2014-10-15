@@ -2,10 +2,10 @@
 
 # Copyright (c) 2009-2012, Andrew McNabb
 
-"""Implementation of SSH_ASKPASS to get a password to ssh from pssh.
+"""Implementation of SSH_ASKPASS to get a password to ssh from parallax.
 
 The password is read from the socket specified by the environment variable
-PSSH_ASKPASS_SOCKET.  The other end of this socket is pssh.
+PARALLAX_ASKPASS_SOCKET.  The other end of this socket is parallax.
 
 The ssh man page discusses SSH_ASKPASS as follows:
     If ssh needs a passphrase, it will read the passphrase from the current
@@ -23,12 +23,12 @@ import sys
 import textwrap
 
 bin_dir = os.path.dirname(os.path.abspath(sys.argv[0]))
-askpass_bin_path = os.path.join(bin_dir, 'pssh-askpass')
+askpass_bin_path = os.path.join(bin_dir, 'parallax-askpass')
 ASKPASS_PATHS = (askpass_bin_path,
-        '/usr/libexec/pssh/pssh-askpass',
-        '/usr/local/libexec/pssh/pssh-askpass',
-        '/usr/lib/pssh/pssh-askpass',
-        '/usr/local/lib/pssh/pssh-askpass')
+        '/usr/libexec/parallax/parallax-askpass',
+        '/usr/local/libexec/parallax/parallax-askpass',
+        '/usr/lib/parallax/parallax-askpass',
+        '/usr/local/lib/parallax/parallax-askpass')
 
 _executable_path = None
 
@@ -46,15 +46,15 @@ def executable_path():
         else:
             _executable_path = ''
             sys.stderr.write(textwrap.fill("Warning: could not find an"
-                    " executable path for askpass because PSSH was not"
+                    " executable path for askpass because Parallax SSH was not"
                     " installed correctly.  Password prompts will not work."))
             sys.stderr.write('\n')
     return _executable_path
 
 def askpass_main():
-    """Connects to pssh over the socket specified at PSSH_ASKPASS_SOCKET."""
+    """Connects to parallax over the socket specified at PARALLAX_ASKPASS_SOCKET."""
 
-    verbose = os.getenv('PSSH_ASKPASS_VERBOSE')
+    verbose = os.getenv('PARALLAX_ASKPASS_VERBOSE')
 
     # It's not documented anywhere, as far as I can tell, but ssh may prompt
     # for a password or ask a yes/no question.  The command-line argument
@@ -62,18 +62,18 @@ def askpass_main():
     if len(sys.argv) > 1:
         prompt = sys.argv[1]
         if verbose:
-            sys.stderr.write('pssh-askpass received prompt: "%s"\n' % prompt)
+            sys.stderr.write('parallax-askpass received prompt: "%s"\n' % prompt)
         if not prompt.strip().lower().endswith('password:'):
             sys.stderr.write(prompt)
             sys.stderr.write('\n')
             sys.exit(1)
     else:
-        sys.stderr.write('Error: pssh-askpass called without a prompt.\n')
+        sys.stderr.write('Error: parallax-askpass called without a prompt.\n')
         sys.exit(1)
 
-    address = os.getenv('PSSH_ASKPASS_SOCKET')
+    address = os.getenv('PARALLAX_ASKPASS_SOCKET')
     if not address:
-        sys.stderr.write(textwrap.fill("pssh error: SSH requested a password."
+        sys.stderr.write(textwrap.fill("parallax error: SSH requested a password."
                 " Please create SSH keys or use the -A option to provide a"
                 " password."))
         sys.stderr.write('\n')

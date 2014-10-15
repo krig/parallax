@@ -14,16 +14,16 @@ try:
 except ImportError:
     import Queue as queue
 
-from psshlib.askpass_server import PasswordServer
-from psshlib import psshutil
-from psshlib.cli import DEFAULT_PARALLELISM, DEFAULT_TIMEOUT
-from psshlib.callbacks import DefaultCallbacks
+from parallax.askpass_server import PasswordServer
+from parallax import psshutil
+from parallax import DEFAULT_PARALLELISM, DEFAULT_TIMEOUT
+from parallax.callbacks import DefaultCallbacks
 
 READ_SIZE = 1 << 16
 
 
 class FatalError(RuntimeError):
-    """A fatal error in the PSSH Manager."""
+    """A fatal error in the Parallax SSH Manager."""
     pass
 
 

@@ -13,7 +13,7 @@ import sys
 import tempfile
 import textwrap
 
-from psshlib import psshutil
+from parallax import psshutil
 
 
 class PasswordServer(object):

@@ -1,6 +1,6 @@
 # Copyright (c) 2013, Kristoffer Gronlund
 #
-# psshlib API
+# Parallax SSH API
 #
 # Exposes an API for performing
 # parallel SSH operations
@@ -19,7 +19,7 @@
 #
 # error is an error object which has an error message (or more)
 #
-# opts is command line options as given to pssh/pscp/pslurp
+# opts is bascially command line options
 #
 # call: Executes the given command on a set of hosts, collecting the output
 # copy: Copies files from the local machine to a set of remote hosts
@@ -27,9 +27,12 @@
 
 import os
 import sys
-from psshlib.cli import DEFAULT_PARALLELISM, DEFAULT_TIMEOUT
-from psshlib.manager import Manager, FatalError
-from psshlib.task import Task
+
+DEFAULT_PARALLELISM = 32
+DEFAULT_TIMEOUT = 0  # "infinity" by default
+
+from parallax.manager import Manager, FatalError
+from parallax.task import Task
 
 
 class Error(object):
@@ -112,7 +115,7 @@ class _CallOutputBuilder(object):
 def _build_call_cmd(host, port, user, cmdline, options, extra):
     cmd = ['ssh', host,
            '-o', 'NumberOfPasswordPrompts=1',
-           '-o', 'SendEnv=PSSH_NODENUM PSSH_HOST']
+           '-o', 'SendEnv=PARALLAX_NODENUM PARALLAX_HOST']
     if options:
         for opt in options:
             cmd += ['-o', opt]

@@ -9,7 +9,7 @@ import sys
 import time
 import traceback
 
-from psshlib import askpass_client
+from parallax import askpass_client
 
 BUFFER_SIZE = 1 << 16
 
@@ -101,20 +101,20 @@ class Task(object):
 
         # Set up the environment.
         environ = dict(os.environ)
-        environ['PSSH_NODENUM'] = str(nodenum)
-        environ['PSSH_HOST'] = self.host
+        environ['PARALLAX_NODENUM'] = str(nodenum)
+        environ['PARALLAX_HOST'] = self.host
         # Disable the GNOME pop-up password dialog and allow ssh to use
         # askpass.py to get a provided password.  If the module file is
         # askpass.pyc, we replace the extension.
         environ['SSH_ASKPASS'] = askpass_client.executable_path()
         if askpass_socket:
-            environ['PSSH_ASKPASS_SOCKET'] = askpass_socket
+            environ['PARALLAX_ASKPASS_SOCKET'] = askpass_socket
         if self.verbose:
-            environ['PSSH_ASKPASS_VERBOSE'] = '1'
+            environ['PARALLAX_ASKPASS_VERBOSE'] = '1'
         # Work around a mis-feature in ssh where it won't call SSH_ASKPASS
         # if DISPLAY is unset.
         if 'DISPLAY' not in environ:
-            environ['DISPLAY'] = 'pssh-gibberish'
+            environ['DISPLAY'] = 'parallax-gibberish'
 
         # Create the subprocess.  Since we carefully call set_cloexec() on
         # all open files, we specify close_fds=False.

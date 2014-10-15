@@ -2,6 +2,5 @@
 # MANIFEST.in docs: http://docs.python.org/distutils/commandref.html
 
 include COPYING
-include INSTALL
 include AUTHORS
-include ChangeLog
+include README.md

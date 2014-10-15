@@ -2,7 +2,6 @@
 # Copyright (c) 2003-2008, Brent N. Chun
 
 import fcntl
-import string
 import sys
 
 HOST_FORMAT = 'Host format is [user@]host[:port] [user]'
@@ -57,7 +56,7 @@ def parse_host_entry(line, default_user, default_port):
     fields = line.split()
     if len(fields) > 2:
         sys.stderr.write('Bad line: "%s". Format should be'
-                ' [user@]host[:port] [user]\n' % line)
+                         ' [user@]host[:port] [user]\n' % line)
         return None, None, None
     host_field = fields[0]
     host, port, user = parse_host(host_field, default_port=default_port)
