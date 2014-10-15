@@ -29,6 +29,8 @@ class CallTest(unittest.TestCase):
         opts = para.Options()
         opts.default_user = g_user
         for host, result in para.call(g_hosts, "ls -l /", opts).iteritems():
+            if isinstance(result, para.Error):
+                raise result
             rc, out, err = result
             self.assertEqual(rc, 0)
             self.assert_(len(out) > 0)
@@ -37,6 +39,8 @@ class CallTest(unittest.TestCase):
         opts = para.Options()
         opts.default_user = g_user
         for host, result in para.call(g_hosts, "uptime", opts).iteritems():
+            if isinstance(result, para.Error):
+                raise result
             rc, out, err = result
             self.assertEqual(rc, 0)
             self.assert_(out.find("load average") != -1)
@@ -62,11 +66,15 @@ class CopySlurpTest(unittest.TestCase):
         opts.localdir = self.tmpDir
         by_host = para.copy(g_hosts, "/etc/hosts", "/tmp/para.test", opts)
         for host, result in by_host.iteritems():
+            if isinstance(result, para.Error):
+                raise result
             rc, _, _ = result
             self.assertEqual(rc, 0)
 
         by_host = para.slurp(g_hosts, "/tmp/para.test", "para.test", opts)
         for host, result in by_host.iteritems():
+            if isinstance(result, para.Error):
+                raise result
             rc, _, _, path = result
             self.assertEqual(rc, 0)
             self.assert_(path.endswith('%s/para.test' % (host)))
