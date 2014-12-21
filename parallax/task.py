@@ -218,9 +218,8 @@ class Task(object):
                 if self.outfile:
                     self.writer.write(self.outfile, buf)
                 if self.print_out:
-                    sys.stdout.write('%s: %s' % (self.host, buf))
-                    if buf[-1] != '\n':
-                        sys.stdout.write('\n')
+                    for l in buf.split('\n'):
+                        sys.stdout.write('%s: %s\n' % (self.host, l))
             else:
                 self.close_stdout(iomap)
         except (OSError, IOError):
