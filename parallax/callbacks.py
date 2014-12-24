@@ -30,10 +30,11 @@ class DefaultCallbacks(object):
             failure = "[FAILURE]"
             stderr = "Stderr: "
         host = task.pretty_host
-        if task.failures:
-            print(' '.join((progress, tstamp, failure, host, error)))
-        else:
-            print(' '.join((progress, tstamp, success, host)))
+        if not task.quiet:
+            if task.failures:
+                print(' '.join((progress, tstamp, failure, host, error)))
+            else:
+                print(' '.join((progress, tstamp, success, host)))
         # NOTE: The extra flushes are to ensure that the data is output in
         # the correct order with the C implementation of io.
         if task.outputbuffer:
