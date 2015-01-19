@@ -47,11 +47,26 @@ class Manager(object):
         # Backwards compatibility with old __init__
         # format: Only argument is an options dict
         if not isinstance(limit, int):
-            self.limit = limit.par
-            self.timeout = limit.timeout
-            self.askpass = limit.askpass
-            self.outdir = limit.outdir
-            self.errdir = limit.errdir
+            if hasattr(limit, 'par'):
+                self.limit = limit.par
+            else:
+                self.limit = DEFAULT_PARALLELISM
+            if hasattr(limit, 'timeout'):
+                self.timeout = limit.timeout
+            else:
+                self.timeout = DEFAULT_TIMEOUT
+            if hasattr(limit, 'askpass'):
+                self.askpass = limit.askpass
+            else:
+                self.askpass = False
+            if hasattr(limit, 'outdir'):
+                self.outdir = limit.outdir
+            else:
+                self.outdir = None
+            if hasattr(limit, 'errdir'):
+                self.errdir = limit.errdir
+            else:
+                self.errdir = None
         else:
             self.limit = limit
             self.timeout = timeout
