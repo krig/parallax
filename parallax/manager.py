@@ -47,7 +47,9 @@ class Manager(object):
         # Backwards compatibility with old __init__
         # format: Only argument is an options dict
         if not isinstance(limit, int):
-            if hasattr(limit, 'par'):
+            if hasattr(limit, 'limit'):
+                self.limit = limit.limit
+            elif hasattr(limit, 'par'):
                 self.limit = limit.par
             else:
                 self.limit = DEFAULT_PARALLELISM
