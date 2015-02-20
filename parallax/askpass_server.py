@@ -62,7 +62,7 @@ class PasswordServer(object):
         fd = conn.fileno()
         iomap.register_write(fd, self.handle_write)
         self.socketmap[fd] = conn
-        self.buffermap[fd] = self.password
+        self.buffermap[fd] = self.password.encode()
 
     def handle_write(self, fd, iomap):
         buffer = self.buffermap[fd]
