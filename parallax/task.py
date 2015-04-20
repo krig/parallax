@@ -90,7 +90,7 @@ class Task(object):
         self.quiet = quiet
         self.print_out = print_out
         self.inline = inline
-        self.inline_stdout = inline_stdout
+        self.inline_stdout = inline or inline_stdout
 
     def start(self, nodenum, iomap, writer, askpass_socket=None):
         """Starts the process and registers files with the IOMap."""
@@ -210,7 +210,7 @@ class Task(object):
         try:
             buf = os.read(fd, BUFFER_SIZE)
             if buf:
-                if self.inline or self.inline_stdout:
+                if self.inline_stdout:
                     if self.quiet:
                         self.outputbuffer += "%s: %s" % (self.host, buf)
                     else:

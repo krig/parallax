@@ -55,6 +55,12 @@ class Error(BaseException):
 class Options(object):
     """
     Common options for call, copy and slurp.
+
+    Note:
+    Setting the inline or inline_stdout options prints the
+    output to stdout unless an alternative manager callback
+    has been set. inline is True by default. This is a change
+    from pssh to parallax.
     """
     limit = DEFAULT_PARALLELISM  # Max number of parallel threads
     timeout = DEFAULT_TIMEOUT    # Timeout in seconds

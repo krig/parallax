@@ -37,14 +37,14 @@ class DefaultCallbacks(object):
                 print(' '.join((progress, tstamp, success, host)))
         # NOTE: The extra flushes are to ensure that the data is output in
         # the correct order with the C implementation of io.
-        if task.outputbuffer:
+        if task.inline_stdout and task.outputbuffer:
             sys.stdout.flush()
             try:
                 sys.stdout.buffer.write(task.outputbuffer)
                 sys.stdout.flush()
             except AttributeError:
                 sys.stdout.write(task.outputbuffer)
-        if task.errorbuffer:
+        if task.inline and task.errorbuffer:
             sys.stdout.write(stderr)
             # Flush the TextIOWrapper before writing to the binary buffer.
             sys.stdout.flush()
