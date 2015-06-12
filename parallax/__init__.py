@@ -35,6 +35,12 @@ from parallax.manager import Manager, FatalError
 from parallax.task import Task
 
 
+try:
+    basestring
+except NameError:
+    basestring = str
+
+
 class Error(BaseException):
     """
     Returned instead of a result for a host
@@ -86,7 +92,7 @@ def _expand_host_port_user(lst):
     Output: list of (host, port, user)-tuples.
     """
     def expand(v):
-        if isinstance(v, str):
+        if isinstance(v, basestring):
             return (v, None, None)
         elif len(v) == 1:
             return (v[0], None, None)
