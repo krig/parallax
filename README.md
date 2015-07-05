@@ -1,5 +1,7 @@
 # Parallax SSH
 
+[![Code Climate](https://codeclimate.com/github/krig/parallax/badges/gpa.svg)](https://codeclimate.com/github/krig/parallax)
+
 Parallax SSH is a fork of [Parallel SSH][pssh] which focuses less on
 command-line tools and more on providing a flexible and programmable
 API that can be used by Python application developers to perform SSH
