@@ -83,4 +83,6 @@ if __name__ == '__main__':
     suite = unittest.TestSuite()
     suite.addTest(unittest.makeSuite(CallTest, "test"))
     suite.addTest(unittest.makeSuite(CopySlurpTest, "test"))
-    unittest.TextTestRunner().run(suite)
+    result = unittest.TextTestRunner().run(suite)
+    if not result.wasSuccessful():
+        sys.exit(1)
