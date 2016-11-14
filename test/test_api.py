@@ -11,7 +11,7 @@ import shutil
 basedir, bin = os.path.split(os.path.dirname(os.path.abspath(sys.argv[0])))
 sys.path.insert(0, "%s" % basedir)
 
-print basedir
+print(basedir)
 
 import parallax as para
 
@@ -28,7 +28,7 @@ class CallTest(unittest.TestCase):
     def testSimpleCall(self):
         opts = para.Options()
         opts.default_user = g_user
-        for host, result in para.call(g_hosts, "ls -l /", opts).iteritems():
+        for host, result in para.call(g_hosts, "ls -l /", opts).items():
             if isinstance(result, para.Error):
                 raise result
             rc, out, err = result
@@ -38,17 +38,17 @@ class CallTest(unittest.TestCase):
     def testUptime(self):
         opts = para.Options()
         opts.default_user = g_user
-        for host, result in para.call(g_hosts, "uptime", opts).iteritems():
+        for host, result in para.call(g_hosts, "uptime", opts).items():
             if isinstance(result, para.Error):
                 raise result
             rc, out, err = result
             self.assertEqual(rc, 0)
-            self.assert_(out.find("load average") != -1)
+            self.assert_(out.decode("utf8").find("load average") != -1)
 
     def testFailingCall(self):
         opts = para.Options()
         opts.default_user = g_user
-        for host, result in para.call(g_hosts, "touch /foofoo/barbar/jfikjfdj", opts).iteritems():
+        for host, result in para.call(g_hosts, "touch /foofoo/barbar/jfikjfdj", opts).items():
             self.assert_(isinstance(result, para.Error))
             self.assert_(str(result).find('with error code') != -1)
 
@@ -65,14 +65,14 @@ class CopySlurpTest(unittest.TestCase):
         opts.default_user = g_user
         opts.localdir = self.tmpDir
         by_host = para.copy(g_hosts, "/etc/hosts", "/tmp/para.test", opts)
-        for host, result in by_host.iteritems():
+        for host, result in by_host.items():
             if isinstance(result, para.Error):
                 raise result
             rc, _, _ = result
             self.assertEqual(rc, 0)
 
         by_host = para.slurp(g_hosts, "/tmp/para.test", "para.test", opts)
-        for host, result in by_host.iteritems():
+        for host, result in by_host.items():
             if isinstance(result, para.Error):
                 raise result
             rc, _, _, path = result
