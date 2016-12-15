@@ -172,8 +172,8 @@ def call(hosts, cmdline, opts=Options()):
         manager.add_task(t)
     try:
         return manager.run()
-    except FatalError:
-        sys.exit(1)
+    except FatalError as err:
+        raise IOError(str(err))
 
 
 class _CopyOutputBuilder(object):
@@ -246,8 +246,8 @@ def copy(hosts, src, dst, opts=Options()):
         manager.add_task(t)
     try:
         return manager.run()
-    except FatalError:
-        sys.exit(1)
+    except FatalError as err:
+        raise IOError(str(err))
 
 
 class _SlurpOutputBuilder(object):
@@ -343,5 +343,5 @@ def slurp(hosts, src, dst, opts=Options()):
         manager.add_task(t)
     try:
         return manager.run()
-    except FatalError:
-        sys.exit(1)
+    except FatalError as err:
+        raise IOError(str(err))
