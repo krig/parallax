@@ -1,4 +1,4 @@
-from distutils.core import setup
+from setuptools import setup
 from parallax import version
 
 long_description = """Parallax SSH provides an interface to executing commands on multiple
