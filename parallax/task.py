@@ -119,7 +119,7 @@ class Task(object):
         # Create the subprocess.  Since we carefully call set_cloexec() on
         # all open files, we specify close_fds=False.
         self.proc = Popen(self.cmd, stdin=PIPE, stdout=PIPE, stderr=PIPE,
-                close_fds=False, preexec_fn=os.setsid, env=environ)
+                          close_fds=False, preexec_fn=os.setsid, env=environ)
         self.timestamp = time.time()
         if self.inputbuffer:
             self.stdin = self.proc.stdin
@@ -172,8 +172,7 @@ class Task(object):
                     # Set the exitstatus to what it would be if we waited.
                     self.exitstatus = -signal.SIGKILL
                     return False
-                else:
-                    return True
+                return True
             else:
                 if self.exitstatus < 0:
                     message = 'Killed by signal %s' % (-self.exitstatus)
@@ -268,10 +267,9 @@ class Task(object):
         if self.verbose:
             exc_type, exc_value, exc_traceback = sys.exc_info()
             exc = ("Exception: %s, %s, %s" %
-                    (exc_type, exc_value, traceback.format_tb(exc_traceback)))
+                   (exc_type, exc_value, traceback.format_tb(exc_traceback)))
         else:
             exc = str(e)
         self.failures.append(exc)
 
 # vim:ts=4:sw=4:et:
-

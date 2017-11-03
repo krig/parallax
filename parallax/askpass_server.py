@@ -24,6 +24,7 @@ class PasswordServer(object):
         self.address = None
         self.socketmap = {}
         self.buffermap = {}
+        self.password = ""
 
     def start(self, iomap, backlog):
         """Prompts for the password, creates a socket, and starts listening.

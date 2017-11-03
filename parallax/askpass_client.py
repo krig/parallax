@@ -25,13 +25,14 @@ import textwrap
 bin_dir = os.path.dirname(os.path.abspath(sys.argv[0]))
 askpass_bin_path = os.path.join(bin_dir, 'parallax-askpass')
 ASKPASS_PATHS = (askpass_bin_path,
-        '/usr/bin/parallax-askpass',
-        '/usr/libexec/parallax/parallax-askpass',
-        '/usr/local/libexec/parallax/parallax-askpass',
-        '/usr/lib/parallax/parallax-askpass',
-        '/usr/local/lib/parallax/parallax-askpass')
+                 '/usr/bin/parallax-askpass',
+                 '/usr/libexec/parallax/parallax-askpass',
+                 '/usr/local/libexec/parallax/parallax-askpass',
+                 '/usr/lib/parallax/parallax-askpass',
+                 '/usr/local/lib/parallax/parallax-askpass')
 
 _executable_path = None
+
 
 def executable_path():
     """Determines the value to use for SSH_ASKPASS.
@@ -46,11 +47,13 @@ def executable_path():
                 break
         else:
             _executable_path = ''
-            sys.stderr.write(textwrap.fill("Warning: could not find an"
-                    " executable path for askpass because Parallax SSH was not"
-                    " installed correctly.  Password prompts will not work."))
+            sys.stderr.write(
+                textwrap.fill("Warning: could not find an"
+                              " executable path for askpass because Parallax SSH was not"
+                              " installed correctly.  Password prompts will not work."))
             sys.stderr.write('\n')
     return _executable_path
+
 
 def askpass_main():
     """Connects to parallax over the socket specified at PARALLAX_ASKPASS_SOCKET."""
@@ -74,9 +77,10 @@ def askpass_main():
 
     address = os.getenv('PARALLAX_ASKPASS_SOCKET')
     if not address:
-        sys.stderr.write(textwrap.fill("parallax error: SSH requested a password."
-                " Please create SSH keys or use the -A option to provide a"
-                " password."))
+        sys.stderr.write(
+            textwrap.fill("parallax error: SSH requested a password."
+                          " Please create SSH keys or use the -A option to provide a"
+                          " password."))
         sys.stderr.write('\n')
         sys.exit(1)
 

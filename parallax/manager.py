@@ -179,7 +179,7 @@ class Manager(object):
         Due to http://bugs.python.org/issue1068268, signals must be masked
         when this method is called.
         """
-        while 0 < len(self.tasks) and len(self.running) < self.limit:
+        while self.tasks and len(self.running) < self.limit:
             task = self.tasks.pop(0)
             self.running.append(task)
             task.start(self.taskcount, self.iomap, writer, self.askpass_socket)
@@ -217,8 +217,7 @@ class Manager(object):
 
         if min_timeleft is None:
             return 0
-        else:
-            return max(0, min_timeleft)
+        return max(0, min_timeleft)
 
     def interrupted(self):
         """Cleans up after a keyboard interrupt."""
@@ -306,7 +305,7 @@ class IOMap(object):
             errno, message = e.args
             if errno != EINTR:
                 sys.stderr.write('Fatal error reading from wakeup pipe: %s\n'
-                        % message)
+                                 % message)
                 raise FatalError
 
 
@@ -365,8 +364,7 @@ def make_iomap():
     """
     if hasattr(select, 'poll'):
         return PollIOMap()
-    else:
-        return IOMap()
+    return IOMap()
 
 
 class Writer(threading.Thread):
@@ -442,4 +440,3 @@ class Writer(threading.Thread):
     def signal_quit(self):
         """Called from another thread to request the Writer to quit."""
         self.queue.put((self.ABORT, None))
-

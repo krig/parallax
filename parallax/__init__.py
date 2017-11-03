@@ -61,6 +61,7 @@ class Error(BaseException):
     that host.
     """
     def __init__(self, msg, task):
+        super.__init__()
         self.msg = msg
         self.task = task
 
@@ -111,8 +112,7 @@ def _expand_host_port_user(lst):
             return (v[0], None, None)
         elif len(v) == 2:
             return (v[0], v[1], None)
-        else:
-            return v
+        return v
     return [expand(x) for x in lst]
 
 
@@ -281,8 +281,7 @@ class _SlurpOutputBuilder(object):
                 ret[task.host] = (task.exitstatus,
                                   task.outputbuffer or manager.outdir,
                                   task.errorbuffer or manager.errdir,
-                                  self.localdirs.get(task.host, None)
-)
+                                  self.localdirs.get(task.host, None))
         return ret
 
 
