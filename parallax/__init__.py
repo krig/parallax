@@ -41,6 +41,19 @@ except NameError:
     basestring = str
 
 
+def to_ascii(s):
+    """Convert the bytes string to a ASCII string
+    Usefull to remove accent (diacritics)"""
+    if s is None:
+        return s
+    if isinstance(s, str):
+        return s
+    try:
+        return str(s, 'utf-8')
+    except UnicodeDecodeError:
+        return s
+
+
 class Error(BaseException):
     """
     Returned instead of a result for a host
@@ -54,7 +67,7 @@ class Error(BaseException):
     def __str__(self):
         if self.task and self.task.errorbuffer:
             return "%s, Error output: %s" % (self.msg,
-                                             self.task.errorbuffer)
+                                             to_ascii(self.task.errorbuffer))
         return self.msg
 
 
