@@ -33,7 +33,7 @@ class CallTest(unittest.TestCase):
                 raise result
             rc, out, err = result
             self.assertEqual(rc, 0)
-            self.assert_(len(out) > 0)
+            self.assertTrue(len(out) > 0)
 
     def testUptime(self):
         opts = para.Options()
@@ -43,14 +43,14 @@ class CallTest(unittest.TestCase):
                 raise result
             rc, out, err = result
             self.assertEqual(rc, 0)
-            self.assert_(out.decode("utf8").find("load average") != -1)
+            self.assertTrue(out.decode("utf8").find("load average") != -1)
 
     def testFailingCall(self):
         opts = para.Options()
         opts.default_user = g_user
         for host, result in para.call(g_hosts, "touch /foofoo/barbar/jfikjfdj", opts).items():
-            self.assert_(isinstance(result, para.Error))
-            self.assert_(str(result).find('with error code') != -1)
+            self.assertTrue(isinstance(result, para.Error))
+            self.assertTrue(str(result).find('with error code') != -1)
 
 
 class CopySlurpTest(unittest.TestCase):
@@ -77,7 +77,7 @@ class CopySlurpTest(unittest.TestCase):
                 raise result
             rc, _, _, path = result
             self.assertEqual(rc, 0)
-            self.assert_(path.endswith('%s/para.test' % (host)))
+            self.assertTrue(path.endswith('%s/para.test' % (host)))
 
 if __name__ == '__main__':
     suite = unittest.TestSuite()
