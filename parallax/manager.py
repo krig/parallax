@@ -44,6 +44,7 @@ class Manager(object):
                  askpass=False,
                  outdir=None,
                  errdir=None,
+                 warn_message=True,
                  callbacks=DefaultCallbacks()):
         # Backwards compatibility with old __init__
         # format: Only argument is an options dict
@@ -86,6 +87,7 @@ class Manager(object):
         self.done = []
 
         self.askpass_socket = None
+        self.warn_message = warn_message
 
     def run(self):
         """Processes tasks previously added with add_task."""
@@ -99,7 +101,7 @@ class Manager(object):
 
             if self.askpass:
                 pass_server = PasswordServer()
-                pass_server.start(self.iomap, self.limit)
+                pass_server.start(self.iomap, self.limit, warn=self.warn_message)
                 self.askpass_socket = pass_server.address
 
             self.set_sigchld_handler()

@@ -26,15 +26,16 @@ class PasswordServer(object):
         self.buffermap = {}
         self.password = ""
 
-    def start(self, iomap, backlog):
+    def start(self, iomap, backlog, warn=True):
         """Prompts for the password, creates a socket, and starts listening.
 
         The specified backlog should be the max number of clients connecting
         at once.
         """
-        message = ('Warning: do not enter your password if anyone else has'
-                   ' superuser privileges or access to your account.')
-        print(textwrap.fill(message))
+        if warn:
+            message = ('Warning: do not enter your password if anyone else has'
+                       ' superuser privileges or access to your account.')
+            print(textwrap.fill(message))
 
         self.password = getpass.getpass()
 

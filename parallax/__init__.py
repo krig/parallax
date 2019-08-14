@@ -98,6 +98,7 @@ class Options(object):
     default_user = None          # User to connect as (unless overridden per host)
     recursive = True             # (copy, slurp only) Copy recursively
     localdir = None              # (slurp only) Local base directory to copy to
+    warn_message = True          # show warn message when asking for a password
 
 
 def _expand_host_port_user(lst):
@@ -169,6 +170,7 @@ def call(hosts, cmdline, opts=Options()):
                       askpass=opts.askpass,
                       outdir=opts.outdir,
                       errdir=opts.errdir,
+                      warn_message=opts.warn_message,
                       callbacks=_CallOutputBuilder())
     for host, port, user in _expand_host_port_user(hosts):
         cmd = _build_call_cmd(host, port, user, cmdline,
@@ -245,6 +247,7 @@ def copy(hosts, src, dst, opts=Options()):
                       askpass=opts.askpass,
                       outdir=opts.outdir,
                       errdir=opts.errdir,
+                      warn_message=opts.warn_message,
                       callbacks=_CopyOutputBuilder())
     for host, port, user in _expand_host_port_user(hosts):
         cmd = _build_copy_cmd(host, port, user, src, dst, opts)
@@ -340,6 +343,7 @@ def slurp(hosts, src, dst, opts=Options()):
                       askpass=opts.askpass,
                       outdir=opts.outdir,
                       errdir=opts.errdir,
+                      warn_message=opts.warn_message,
                       callbacks=_SlurpOutputBuilder(localdirs))
     for host, port, user in _expand_host_port_user(hosts):
         localpath = localdirs[host]
