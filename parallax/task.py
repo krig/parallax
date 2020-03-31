@@ -19,6 +19,9 @@ except NameError:
     bytes = str
 
 
+PY2 = sys.version[0] == '2'
+
+
 class Task(object):
     """Starts a process and manages its input and output.
 
@@ -118,8 +121,13 @@ class Task(object):
 
         # Create the subprocess.  Since we carefully call set_cloexec() on
         # all open files, we specify close_fds=False.
-        self.proc = Popen(self.cmd, stdin=PIPE, stdout=PIPE, stderr=PIPE,
-                          close_fds=False, preexec_fn=os.setsid, env=environ)
+        if PY2:
+            self.proc = Popen(self.cmd, stdin=PIPE, stdout=PIPE, stderr=PIPE, 
+                    close_fds=False, preexec_fn=os.setsid, env=environ)
+        else:
+            self.proc = Popen(self.cmd, stdin=PIPE, stdout=PIPE, stderr=PIPE,
+                    close_fds=False, start_new_session=True, env=environ)
+
         self.timestamp = time.time()
         if self.inputbuffer:
             self.stdin = self.proc.stdin
