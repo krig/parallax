@@ -163,24 +163,13 @@ class Manager(object):
 
     def update_tasks(self, writer):
         """Reaps tasks and starts as many new ones as allowed."""
-        # Mask signals to work around a Python bug:
-        #   http://bugs.python.org/issue1068268
-        # Since sigprocmask isn't in the stdlib, clear the SIGCHLD handler.
-        # Since signals are masked, reap_tasks needs to be called once for
-        # each loop.
         keep_running = True
         while keep_running:
-            self.clear_sigchld_handler()
             self._start_tasks_once(writer)
-            self.set_sigchld_handler()
             keep_running = self.reap_tasks()
 
     def _start_tasks_once(self, writer):
-        """Starts tasks once.
-
-        Due to http://bugs.python.org/issue1068268, signals must be masked
-        when this method is called.
-        """
+        """Starts tasks once."""
         while self.tasks and len(self.running) < self.limit:
             task = self.tasks.pop(0)
             self.running.append(task)
