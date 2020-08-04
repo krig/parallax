@@ -226,9 +226,9 @@ def _build_copy_cmd(host, port, user, src, dst, opts):
         cmd.extend(opts.ssh_extra)
     cmd.append(src)
     if user:
-        cmd.append('%s@%s:%s' % (user, host, dst))
+        cmd.append('%s@[%s]:%s' % (user, host, dst))
     else:
-        cmd.append('%s:%s' % (host, dst))
+        cmd.append('[%s]:%s' % (host, dst))
     return cmd
 
 
@@ -320,9 +320,9 @@ def _build_slurp_cmd(host, port, user, src, dst, opts):
     if opts.ssh_extra:
         cmd.extend(opts.ssh_extra)
     if user:
-        cmd.append('%s@%s:%s' % (user, host, src))
+        cmd.append('%s@[%s]:%s' % (user, host, src))
     else:
-        cmd.append('%s:%s' % (host, src))
+        cmd.append('[%s]:%s' % (host, src))
     cmd.append(dst)
     return cmd
 
