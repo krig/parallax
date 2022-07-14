@@ -39,7 +39,8 @@ class Task(object):
                  print_out=False,
                  inline=False,
                  inline_stdout=False,
-                 default_user=None):
+                 default_user=None,
+                 is_local=False):
 
         # Backwards compatibility:
         if not isinstance(verbose, bool):
@@ -66,6 +67,7 @@ class Task(object):
         self.pretty_host = host
         self.port = port
         self.cmd = cmd
+        self.is_local = is_local
 
         if user and user != default_user:
             self.pretty_host = '@'.join((user, self.pretty_host))
@@ -126,7 +128,7 @@ class Task(object):
                     close_fds=False, preexec_fn=os.setsid, env=environ)
         else:
             self.proc = Popen(self.cmd, stdin=PIPE, stdout=PIPE, stderr=PIPE,
-                    close_fds=False, start_new_session=True, env=environ)
+                    close_fds=False, start_new_session=True, env=environ, shell=self.is_local)
 
         self.timestamp = time.time()
         if self.inputbuffer:

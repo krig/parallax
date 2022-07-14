@@ -27,6 +27,7 @@
 
 import os
 import sys
+import socket
 
 DEFAULT_PARALLELISM = 32
 DEFAULT_TIMEOUT = 0  # "infinity" by default
@@ -176,7 +177,11 @@ def call(hosts, cmdline, opts=Options()):
                       warn_message=opts.warn_message,
                       callbacks=_CallOutputBuilder())
     for host, port, user in _expand_host_port_user(hosts):
-        cmd = _build_call_cmd(host, port, user, cmdline, opts)
+        is_local = is_local_host(host)
+        if is_local:
+            cmd = [cmdline]
+        else:
+            cmd = _build_call_cmd(host, port, user, cmdline, opts)
         t = Task(host, port, user, cmd,
                  stdin=opts.input_stream,
                  verbose=opts.verbose,
@@ -184,7 +189,8 @@ def call(hosts, cmdline, opts=Options()):
                  print_out=opts.print_out,
                  inline=opts.inline,
                  inline_stdout=opts.inline_stdout,
-                 default_user=opts.default_user)
+                 default_user=opts.default_user,
+                 is_local=is_local)
         manager.add_task(t)
     try:
         return manager.run()
@@ -366,3 +372,15 @@ def slurp(hosts, src, dst, opts=Options()):
         return manager.run()
     except FatalError as err:
         raise IOError(str(err))
+
+
+def is_local_host(host):
+    """
+    Check if the host is local
+    """
+    try:
+        socket.inet_aton(host)
+        hostname = socket.gethostbyaddr(host)[0]
+    except:
+        hostname = host
+    return hostname == socket.gethostname()
