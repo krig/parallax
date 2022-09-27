@@ -55,14 +55,14 @@ def to_ascii(s):
         return s
 
 
-class Error(BaseException):
+class Error(Exception):
     """
     Returned instead of a result for a host
     in case of an error during the processing for
     that host.
     """
     def __init__(self, msg, task):
-        super(BaseException, self).__init__()
+        super(Exception, self).__init__()
         self.msg = msg
         self.task = task
 
