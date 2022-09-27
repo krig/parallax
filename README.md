@@ -32,10 +32,17 @@ Share and enjoy!
 
   Executes the given command on a set of hosts, collecting the output.
 
-  Returns a dict mapping the hostname of
-  each host either to a tuple containing a return code,
-  stdout and stderr, or an `parallax.Error` instance
-  describing the error.
+  Returns a dict mapping the hostname of each host either to a tuple containing
+  a return code, stdout and stderr when return code is 0, or an `parallax.Error`
+  instance describing the error when return code is not 0.
+
+* `parallax.run(hosts, cmdline, opts)`
+
+  Executes the given command on a set of hosts, collecting the output.
+
+  Returns a dict mapping the hostname of each host either to a tuple containing
+  a return code, stdout and stderr, or an `parallax.Error` instance describing
+  the error when ssh error occurred.
 
 * `parallax.copy(hosts, src, dst, opts)`
 

@@ -162,7 +162,7 @@ def _build_call_cmd(host, port, user, cmdline, opts):
 
 def call(hosts, cmdline, opts=Options()):
     """
-    Executes the given command on a set of hosts, collecting the output
+    Executes the given command on a set of hosts, collecting the output. Return Error when exit status != 0.
     Returns {host: (rc, stdout, stdin) | Error}
     """
     if opts.outdir and not os.path.exists(opts.outdir):
@@ -384,3 +384,61 @@ def is_local_host(host):
     except:
         hostname = host
     return hostname == socket.gethostname()
+
+def run(hosts, cmdline, opts=Options()):
+    """
+    Executes the given command on a set of hosts, collecting the output. Return Error when ssh error occurred.
+    Returns {host: (rc, stdout, stdin) | Error}
+    """
+    if opts.outdir and not os.path.exists(opts.outdir):
+        os.makedirs(opts.outdir)
+    if opts.errdir and not os.path.exists(opts.errdir):
+        os.makedirs(opts.errdir)
+    manager = Manager(limit=opts.limit,
+                      timeout=opts.timeout,
+                      askpass=opts.askpass,
+                      outdir=opts.outdir,
+                      errdir=opts.errdir,
+                      warn_message=opts.warn_message,
+                      callbacks=_RunOutputBuilder())
+    for host, port, user in _expand_host_port_user(hosts):
+        is_local = is_local_host(host)
+        if is_local:
+            cmd = [cmdline]
+        else:
+            cmd = _build_call_cmd(host, port, user, cmdline, opts)
+        t = Task(host, port, user, cmd,
+                 stdin=opts.input_stream,
+                 verbose=opts.verbose,
+                 quiet=opts.quiet,
+                 print_out=opts.print_out,
+                 inline=opts.inline,
+                 inline_stdout=opts.inline_stdout,
+                 default_user=opts.default_user,
+                 is_local=is_local)
+        manager.add_task(t)
+    try:
+        return manager.run()
+    except FatalError as err:
+        raise IOError(str(err))
+
+
+class _RunOutputBuilder(object):
+    def __init__(self):
+        self.finished_tasks = []
+
+    def finished(self, task, n):
+        """Called when Task is complete"""
+        self.finished_tasks.append(task)
+
+    def result(self, manager):
+        """Called when all Tasks are complete to generate result"""
+        ret = {}
+        for task in self.finished_tasks:
+            if task.exitstatus == 255:
+                ret[task.host] = Error(', '.join(task.failures), task)
+            else:
+                ret[task.host] = (task.exitstatus,
+                                  task.outputbuffer or manager.outdir,
+                                  task.errorbuffer or manager.errdir)
+        return ret
