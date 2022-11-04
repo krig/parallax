@@ -4,7 +4,6 @@
 from errno import EINTR
 import os
 import select
-import signal
 import sys
 import threading
 import copy
@@ -92,19 +91,19 @@ class Manager(object):
     def run(self):
         """Processes tasks previously added with add_task."""
         self.save_tasks = copy.copy(self.tasks)
-        try:
-            if self.outdir or self.errdir:
-                writer = Writer(self.outdir, self.errdir)
-                writer.start()
-            else:
-                writer = None
+        if self.outdir or self.errdir:
+            writer = Writer(self.outdir, self.errdir)
+            writer.start()
+        else:
+            writer = None
 
+        try:
+            if writer:
+                writer.start()
             if self.askpass:
                 pass_server = PasswordServer()
                 pass_server.start(self.iomap, self.limit, warn=self.warn_message)
                 self.askpass_socket = pass_server.address
-
-            self.set_sigchld_handler()
 
             try:
                 self.update_tasks(writer)
@@ -116,46 +115,17 @@ class Manager(object):
                     self.iomap.poll(wait)
                     self.update_tasks(writer)
                     wait = self.check_timeout()
+                return self.callbacks.result(self)
             except KeyboardInterrupt:
                 # This exception handler tries to clean things up and prints
                 # out a nice status message for each interrupted host.
                 self.interrupted()
+                raise
+        finally:
+            if writer:
+                writer.signal_quit()
+                writer.join()
 
-        except KeyboardInterrupt:
-            # This exception handler doesn't print out any fancy status
-            # information--it just stops.
-            pass
-
-        if writer:
-            writer.signal_quit()
-            writer.join()
-
-        return self.callbacks.result(self)
-
-    def clear_sigchld_handler(self):
-        signal.signal(signal.SIGCHLD, signal.SIG_DFL)
-
-    def set_sigchld_handler(self):
-        # TODO: find out whether set_wakeup_fd still works if the default
-        # signal handler is used (I'm pretty sure it doesn't work if the
-        # signal is ignored).
-        signal.signal(signal.SIGCHLD, self.handle_sigchld)
-        # This should keep reads and writes from getting EINTR.
-        if hasattr(signal, 'siginterrupt'):
-            signal.siginterrupt(signal.SIGCHLD, False)
-
-    def handle_sigchld(self, number, frame):
-        """Apparently we need a sigchld handler to make set_wakeup_fd work."""
-        # Write to the signal pipe (only for Python <2.5, where the
-        # set_wakeup_fd method doesn't exist).
-        if self.iomap.wakeup_writefd:
-            os.write(self.iomap.wakeup_writefd, '\0')
-        for task in self.running:
-            if task.proc:
-                task.proc.poll()
-        # Apparently some UNIX systems automatically reset the SIGCHLD
-        # handler to SIG_DFL.  Reset it just in case.
-        self.set_sigchld_handler()
 
     def add_task(self, task):
         """Adds a Task to be processed with run()."""
@@ -236,17 +206,6 @@ class IOMap(object):
         self.readmap = {}
         self.writemap = {}
 
-        # Setup the wakeup file descriptor to avoid hanging on lost signals.
-        wakeup_readfd, wakeup_writefd = os.pipe()
-        fcntl.fcntl(wakeup_writefd, fcntl.F_SETFL, os.O_NONBLOCK)
-        self.register_read(wakeup_readfd, self.wakeup_handler)
-        # TODO: remove test when we stop supporting Python <2.5
-        if hasattr(signal, 'set_wakeup_fd'):
-            signal.set_wakeup_fd(wakeup_writefd)
-            self.wakeup_writefd = None
-        else:
-            self.wakeup_writefd = wakeup_writefd
-
     def register_read(self, fd, handler):
         """Registers an IO handler for a file descriptor for reading."""
         self.readmap[fd] = handler
@@ -283,21 +242,6 @@ class IOMap(object):
         for fd in wlist:
             handler = self.writemap[fd]
             handler(fd, self)
-
-    def wakeup_handler(self, fd, iomap):
-        """Handles read events on the signal wakeup pipe.
-
-        This ensures that SIGCHLD signals aren't lost.
-        """
-        try:
-            os.read(fd, READ_SIZE)
-        except (OSError, IOError):
-            _, e, _ = sys.exc_info()
-            errno, message = e.args
-            if errno != EINTR:
-                sys.stderr.write('Fatal error reading from wakeup pipe: %s\n'
-                                 % message)
-                raise FatalError
 
 
 class PollIOMap(IOMap):
