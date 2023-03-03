@@ -98,8 +98,6 @@ class Manager(object):
             writer = None
 
         try:
-            if writer:
-                writer.start()
             if self.askpass:
                 pass_server = PasswordServer()
                 pass_server.start(self.iomap, self.limit, warn=self.warn_message)
